@@ -9,6 +9,10 @@ class Tile(enum.Enum):
 
 
 class Board:
+    """
+    A game board. This is immutable; .replace() makes a copy.
+    """
+
     def __init__(self, board=None):
         if isinstance(board, tuple):
             self._tiles = board
@@ -118,6 +122,10 @@ class Board:
 
 
 class Move:
+    """
+    One move in a game, relative to a certain board. Immutable.
+    """
+
     def __init__(self, board, x, y, value):
         self._board = board
         self._x = x
@@ -164,8 +172,18 @@ class Move:
     def __hash__(self):
         return hash((self._x, self._y, self._value))
 
+    def __repr__(self):
+        return f'Move<{self._value._name_},x={self._x},y={self._y}>'
+
 
 def negamax(move):
+    """
+    Find a move that gives the opponent the least room: force a win if we can,
+    if not force a draw.
+    If you know negamax and this looks the wrong way up, it's because I'm
+    starting the search on the child nodes rather than the root. It simplifies
+    the problem of knowing which child gave the best answer.
+    """
     if move.wins:
         return 1
     if move.last:
