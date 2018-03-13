@@ -1,8 +1,6 @@
 import clize
 import enum
 
-from itertools import compress
-
 
 class Tile(enum.Enum):
     EMPTY = ' '
@@ -34,8 +32,7 @@ class Board:
 
     def moves(self, v):
         if v is None:
-            # odd spaces -> X's turn
-            v = Tile.X if self.spaces % 2 == 1 else Tile.O
+            v = self.next
         for x in range(3):
             for y in range(3):
                 if self[x,y] != Tile.EMPTY:
@@ -52,9 +49,20 @@ class Board:
             moves.add(m)
         return moves
 
+    def make_best_move(self):
+        movelist = [(negamax(m), m) for m in self.unique_moves(None)]
+        if len(movelist) < 1:
+            raise ValueError("no moves left")
+        movelist.sort(key=lambda x: x[0])
+        return movelist[-1][1]
+
     @property
     def spaces(self):
         return len([True for x in range(3) for y in range(3) if self[x,y] == Tile.EMPTY])
+
+    @property
+    def next(self):
+        return Tile.X if self.spaces % 2 == 1 else Tile.O
 
     def __getitem__(self, k):
         x, y = k
@@ -96,6 +104,9 @@ class Board:
 
     def __repr__(self):
         return '\n'.join(''.join(e._value_ for e in row) for row in self._tiles)
+
+    def serialize(self):
+        return ''.join(''.join(e._value_ for e in row) for row in self._tiles)
 
     def __eq__(self, other):
         return isinstance(other, Board) and self._tiles == other._tiles
