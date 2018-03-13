@@ -30,11 +30,18 @@ class Board:
         return type(self)(self._replace(self._tiles, x, y, value))
 
     def moves(self, v):
+        if v is None:
+            # odd spaces -> X's turn
+            v = Tile.X if self.spaces % 2 == 1 else Tile.O
         for x in range(3):
             for y in range(3):
                 if self[x,y] != Tile.EMPTY:
                     continue
                 yield Move(self, x, y, v)
+
+    @property
+    def spaces(self):
+        return len([True for x in range(3) for y in range(3) if self[x,y] == Tile.EMPTY])
 
     def __getitem__(self, k):
         x, y = k
@@ -68,6 +75,10 @@ class Board:
                 if v[0,0] is Tile.EMPTY:
                     return None
                 return v[0,0]
+            if v[0,1] == v[1,1] == v[2,1]:
+                if v[0,1] is Tile.EMPTY:
+                    return None
+                return v[0,1]
         return None
 
     def __repr__(self):
@@ -92,20 +103,25 @@ class Move:
         return self._board[self._x, self._y] == Tile.EMPTY
 
     @property
+    def last(self):
+        return self.board.spaces == 0
+
+    @property
     def board(self):
         return self._board.replace(self._x, self._y, self._value)
 
     @property
     def wins(self):
-        return self._board.winner == self._value
+        return self.board.winner == self._value
 
 
 def negamax(move):
-    if check_win(move):
+    if move.wins:
         return 1
     if move.last:
         return 0
-    v = float("-inf")
-    for m in move.board.moves:
-        v = max(v, -negamax(m))
+    v = float("inf")
+    for m in move.board.moves(None):
+        nv = -negamax(m)
+        v = min(v, nv)
     return v
