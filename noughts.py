@@ -40,9 +40,6 @@ class Board:
         x, y = k
         return self._tiles[y][x]
 
-    def __repr__(self):
-        return '\n'.join(''.join(e._value_ for e in row) for row in self._tiles)
-
     def _rotate(self):
         return type(self)(tuple(
             tuple(self[2-y, x] for x in range(3))
@@ -53,9 +50,28 @@ class Board:
             tuple(self[2-x, y] for x in range(3))
             for y in range(3)))
 
+    def rotations(self):
+        x = self
+        for _ in range(4):
+            yield x
+            yield x._mirror()
+            x = x._rotate()
+
+    def symmetries(self):
+        return [n for n, v in enumerate(self.rotations()) if v == self]
+
     @property
     def winner(self):
         pass
+
+    def __repr__(self):
+        return '\n'.join(''.join(e._value_ for e in row) for row in self._tiles)
+
+    def __eq__(self, other):
+        return isinstance(other, Board) and self._tiles == other._tiles
+
+    def __hash__(self):
+        return hash(self._tiles)
 
 
 class Move:
