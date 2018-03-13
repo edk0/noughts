@@ -62,7 +62,13 @@ class Board:
 
     @property
     def winner(self):
-        pass
+        for v in self.rotations():
+            if (v[0,0] == v[1,0] == v[2,0] or
+                    v[0,0] == v[1,1] == v[2,2]):
+                if v[0,0] is Tile.EMPTY:
+                    return None
+                return v[0,0]
+        return None
 
     def __repr__(self):
         return '\n'.join(''.join(e._value_ for e in row) for row in self._tiles)
@@ -88,6 +94,10 @@ class Move:
     @property
     def board(self):
         return self._board.replace(self._x, self._y, self._value)
+
+    @property
+    def wins(self):
+        return self._board.winner == self._value
 
 
 def negamax(move):
