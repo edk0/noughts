@@ -1,0 +1,11 @@
+noughts
+=======
+
+This is a relatively simple program that plays Noughts & Crosses / Tic Tac Toe.
+The algorithm in use is a very simple implementation of pure minimax (with no
+heuristic function). As a result, it will never lose a game, or miss a
+guaranteed win, but it won't necessarily choose the best moves for sneaking by a
+human opponent.
+
+Some care is taken to avoid costly tree walks for multiple moves when they are
+equivalent by mirror or rotational symmetry.
