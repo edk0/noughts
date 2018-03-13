@@ -9,3 +9,6 @@ human opponent.
 
 Some care is taken to avoid costly tree walks for multiple moves when they are
 equivalent by mirror or rotational symmetry.
+
+It would be much faster on turns 1 and 2 with an opening book, but that seems
+boring and a little bit like cheating.
