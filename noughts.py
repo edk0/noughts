@@ -45,7 +45,9 @@ class Board:
         syms = self.symmetries()
         while move_pool:
             m = move_pool.pop()
-            move_pool -= set(compress(m.rotations(), syms))
+            rotations = list(m.rotations())
+            rm = set(rotations[i] for i in syms)
+            move_pool -= rm
             moves.add(m)
         return moves
 
