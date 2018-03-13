@@ -196,3 +196,12 @@ def negamax(move):
         if v <= -1:
             break
     return v
+
+
+def main(board):
+    for m in Board(board).unique_moves(None):
+        print(m.board)
+        print(negamax(m))
+
+if __name__ == '__main__':
+    clize.run(main)
