@@ -100,11 +100,11 @@ class Board:
             if (v[0,0] == v[1,0] == v[2,0] or
                     v[0,0] == v[1,1] == v[2,2]):
                 if v[0,0] is Tile.EMPTY:
-                    return None
+                    continue
                 return v[0,0]
             if v[0,1] == v[1,1] == v[2,1]:
                 if v[0,1] is Tile.EMPTY:
-                    return None
+                    continue
                 return v[0,1]
         return None
 
