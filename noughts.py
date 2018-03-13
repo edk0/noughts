@@ -1,4 +1,7 @@
+import clize
 import enum
+
+from itertools import compress
 
 
 class Tile(enum.Enum):
@@ -38,6 +41,16 @@ class Board:
                 if self[x,y] != Tile.EMPTY:
                     continue
                 yield Move(self, x, y, v)
+
+    def unique_moves(self, v):
+        move_pool = set(self.moves(v))
+        moves = set()
+        syms = self.symmetries()
+        while move_pool:
+            m = move_pool.pop()
+            move_pool -= set(compress(m.rotations(), syms))
+            moves.add(m)
+        return moves
 
     @property
     def spaces(self):
@@ -114,6 +127,30 @@ class Move:
     def wins(self):
         return self.board.winner == self._value
 
+    def _rotate(self):
+        return type(self)(self._board, 2-self._y, self._x, self._value)
+
+    def _mirror(self):
+        return type(self)(self._board, 2-self._x, self._y, self._value)
+
+    def rotations(self):
+        x = self
+        for _ in range(4):
+            yield x
+            yield x._mirror()
+            x = x._rotate()
+
+    def symmetries(self):
+        return [n for n, v in enumerate(self.rotations()) if v == self]
+
+    def __eq__(self, other):
+        return (self._x == other._x and
+                self._y == other._y and
+                self._value == other._value)
+
+    def __hash__(self):
+        return hash((self._x, self._y, self._value))
+
 
 def negamax(move):
     if move.wins:
@@ -121,7 +158,10 @@ def negamax(move):
     if move.last:
         return 0
     v = float("inf")
-    for m in move.board.moves(None):
+    for m in move.board.unique_moves(None):
         nv = -negamax(m)
         v = min(v, nv)
+        # simple pruning: nothing we do now will make it worse
+        if v <= -1:
+            break
     return v
