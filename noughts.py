@@ -57,7 +57,7 @@ class Board:
 
     def make_best_move(self):
         movelist = [(negamax(m), m) for m in self.unique_moves(None)]
-        if len(movelist) < 1:
+        if self.winner or len(movelist) < 1:
             raise ValueError("no moves left")
         movelist.sort(key=lambda x: x[0])
         return movelist[-1][1]
