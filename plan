@@ -1,0 +1,9 @@
+noughts and cross / tic tac toe
+
+The Plan:
+- trivial web server
+  build in state for two-player?
+- program that plays one move of tic-tac-toe
+  - minimax should do?
+  - tic tac toe has a lot of symmetry: e.g. with an x in the centre there are
+    just two unique next moves. with an empty board there are just three.
